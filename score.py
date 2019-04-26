@@ -1,6 +1,6 @@
 import pandas as pd
 
-nirf = "FILE PATH TO CSV"
+nirf = "college_2018_complete.csv"
 heuristicDistance = 200 #Modify to whatever value we want
 
 data = pd.read_csv(nirf)
@@ -8,18 +8,39 @@ data = pd.read_csv(nirf)
 Ascore = {}
 Bscore = {}
 
-for index, row in data.iterrows():
-	#check if you can unpack to list as below
-	for j in list(row['SEZs']):
-		Ascore[j]+=row['GO Score']
-		scaledDistance = list(row['SEZdistances'])[j]/ heuristicDistance
-		Bscore[j]+= (100 - row['GO Score']) / (0.1 + scaledDistance)
-
-#in case can't cast to list parse a string to make it a list
 def parseString(s):
-	s = s[1:-2]
+	s = s[1:-1]
 	l = s.split(",")
 	for i in range(len(l)):
 		l[i] = l[i].strip()
 		l[i] = l[i].replace("'", "")
 	return l
+
+Ascore['None'] = 0
+Bscore['None'] = 0
+
+for index, row in data.iterrows():
+	sezList = parseString(row['sezList'])
+	distList = parseString(row['distList'])
+	#check if you can unpack to list as below
+	flag = 0	
+	for i, d in enumerate(distList):
+		scaledDistance = float(d) / heuristicDistance
+		if flag == 0 and float(d) > heuristicDistance:
+			Ascore['None'] += row['Go Score']
+			Bscore['None']+= (100 - row['Go Score']) / (0.1 + scaledDistance)
+			break
+		if float(d)<heuristicDistance:
+			if sezList[i] not in Ascore:
+				Ascore[sezList[i]] = 0
+			if flag == 0:
+				Ascore[sezList[i]] += row['Go Score']
+			if sezList[i] not in Bscore:
+				Bscore[sezList[i]] = 0
+			Bscore[sezList[i]]+= (100 - row['Go Score']) / (0.1 + scaledDistance)
+			flag = 1
+			break
+for k,v in Ascore.items():
+	print(k, v)
+for k,v in Bscore.items():
+	print(k, v)
