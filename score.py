@@ -40,6 +40,7 @@ for index, row in data.iterrows():
 			Bscore[sezList[i]]+= (100 - row['Go Score']) / (0.1 + scaledDistance)
 			flag = 1
 			break
+<<<<<<< HEAD
 
 for k in sorted(Ascore.keys()):
 	print(k, '\t', Ascore[k])
@@ -48,3 +49,9 @@ print("---------------------------")
 
 for k in sorted(Bscore.keys()):
 	print(k, '\t', Bscore[k])
+=======
+for k,v in Ascore.items():
+	print(k, v)
+for k,v in Bscore.items():
+	print(k, v)
+>>>>>>> c9f4c8a4aeb03972cdb90e4851001d82032cb9c4
